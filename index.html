@@ -1,438 +1,330 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Future Star Classes - अजित सर</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
-        .batch-card { transition: all 0.25s ease; }
-        .batch-card:active { transform: scale(0.97); }
-        .active-tab { background-color: #4f46e5; color: white; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Future Star Classes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ee; --card:#ffffff; --ink:#1b1f3b; --muted:#5d6280;
+  --brand:#2b2f77; --star:#f2b705; --line:#dedbd0; --danger:#b3261e; --ok:#1e7a46;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#14162b; --card:#1d2040; --ink:#f1f0ea; --muted:#a9acc8; --brand:#8d92ff; --line:#33376a;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans Devanagari',system-ui,sans-serif;line-height:1.6;padding-bottom:40px}
+h1,h2,h3{font-family:'Baloo 2','Noto Sans Devanagari',sans-serif;margin:0;line-height:1.25}
+header{background:var(--brand);color:#fff;padding:18px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+@media (prefers-color-scheme:dark){header{background:#262a5e}}
+header h1{font-size:1.4rem;font-weight:800}
+header h1 span{color:var(--star)}
+header small{display:block;font-family:'Noto Sans Devanagari',sans-serif;font-weight:400;font-size:.8rem;opacity:.85}
+main{max-width:720px;margin:0 auto;padding:16px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 16px;min-height:44px}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--star);outline-offset:2px}
+.btn{background:var(--star);color:#1b1f3b;font-weight:600}
+.btn-ghost{background:transparent;color:inherit;border:1.5px solid currentColor}
+.btn-danger{background:transparent;color:var(--danger);border:1.5px solid var(--danger);min-height:38px;padding:4px 12px}
+.batch-list{display:grid;gap:12px;margin-top:8px}
+.batch{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);color:var(--ink);padding:16px;border-radius:14px}
+.batch:hover{border-color:var(--brand)}
+.batch .ic{font-size:1.8rem;width:52px;height:52px;border-radius:12px;background:var(--bg);display:grid;place-items:center;flex:none}
+.batch b{font-family:'Baloo 2',sans-serif;font-size:1.15rem;display:block}
+.batch span{color:var(--muted);font-size:.85rem}
+.back{background:none;color:var(--brand);padding:6px 0;min-height:36px;font-weight:600}
+@media (prefers-color-scheme:dark){.back{color:var(--star)}}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--line);padding:5px;border-radius:12px;margin:12px 0}
+.tab{background:transparent;color:var(--ink);font-weight:600}
+.tab[aria-selected="true"]{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.item .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.item h3{font-size:1.05rem}
+.item a.go{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;padding:8px 16px;border-radius:10px;font-weight:600}
+.item iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;margin-top:10px;background:#000}
+.empty{color:var(--muted);text-align:center;padding:28px 10px;border:1.5px dashed var(--line);border-radius:12px}
+.admin-box{background:var(--card);border:1.5px solid var(--star);border-radius:14px;padding:14px;margin-bottom:14px}
+.admin-box h3{font-size:1rem;margin-bottom:8px}
+input[type=text],input[type=url],input[type=password]{width:100%;font:inherit;padding:11px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);margin-bottom:8px}
+.dialog-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;padding:16px;z-index:10}
+.dialog-bg.open{display:grid}
+.dialog{background:var(--card);border-radius:16px;padding:20px;width:100%;max-width:340px}
+.msg{min-height:1.4em;font-size:.9rem;margin:4px 0}
+.msg.err{color:var(--danger)} .msg.ok{color:var(--ok)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tools button{font-size:.85rem;min-height:38px;padding:6px 12px}
+.hint{font-size:.8rem;color:var(--muted);margin-top:8px}
+.hidden{display:none!important}
+</style>
 </head>
-<body class="bg-slate-100 min-h-screen pb-24">
+<body>
 
-    <!-- Top Navigation Bar -->
-    <nav class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-blue-900 text-white p-4 shadow-lg sticky top-0 z-40">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-amber-400 text-indigo-950 p-2 rounded-xl shadow-md">
-                    <i class="fas fa-star text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-base sm:text-lg font-bold tracking-wide leading-tight">FUTURE STAR CLASSES</h1>
-                    <p class="text-xs text-amber-300 font-medium">संचालक: प्रा. अजित सर</p>
-                </div>
-            </div>
+<header>
+  <h1 id="homeTitle">Future <span>Star</span> Classes<small>अजित सर यांचे क्लासेस</small></h1>
+  <button class="btn btn-ghost" id="adminBtn" style="color:#fff">अजित सर लॉगिन</button>
+</header>
 
-            <div class="flex items-center space-x-2">
-                <button id="add-class-btn" onclick="openModal()" class="hidden bg-emerald-400 hover:bg-emerald-500 text-indigo-950 px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center">
-                    <i class="fas fa-plus-circle mr-1"></i> क्लास जोडा
-                </button>
-                <button id="admin-lock-btn" onclick="handleTeacherAuth()" class="bg-amber-400 hover:bg-amber-500 text-indigo-950 px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center">
-                    <i class="fas fa-lock mr-1.5"></i> अजित सर लॉगिन
-                </button>
-            </div>
-        </div>
-    </nav>
+<main>
+  <!-- Home: batch folders -->
+  <section id="home">
+    <h2>तुमची बॅच निवडा</h2>
+    <div class="batch-list" id="batchList"></div>
+  </section>
 
-    <!-- Admin Active Strip -->
-    <div id="admin-banner" class="hidden bg-emerald-600 text-white text-xs font-bold text-center py-1.5 px-4 shadow-inner">
-        🔓 'अजित सर टीचर मोड' चालू आहे! तुम्ही आता नवीन लेक्चर्स जोडू शकता.
+  <!-- Batch view -->
+  <section id="batchView" class="hidden">
+    <button class="back" id="backBtn">‹ सर्व बॅचेस</button>
+    <h2 id="batchName"></h2>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tabZoom" aria-selected="true">🎥 Zoom लाईव्ह क्लास</button>
+      <button class="tab" role="tab" id="tabYt" aria-selected="false">▶️ YouTube व्हिडिओ</button>
     </div>
 
-    <!-- Main Container -->
-    <div class="max-w-4xl mx-auto p-4">
-
-        <!-- Hero Banner -->
-        <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-6 text-white shadow-xl mb-6 relative overflow-hidden">
-            <div class="relative z-10">
-                <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    🌟 स्वागत आहे!
-                </span>
-                <h2 class="text-2xl font-bold mt-3">प्रा. अजित सर यांचे क्लासेस</h2>
-                <p class="text-indigo-100 text-xs mt-1">तुमची बॅच निवडा आणि Zoom लाईव्ह क्लास किंवा रेकॉर्डेड व्हिडिओ पहा.</p>
-            </div>
-            <i class="fas fa-graduation-cap text-8xl text-white/10 absolute -bottom-4 -right-4 transform -rotate-12"></i>
-        </div>
-
-        <!-- Batch Folders -->
-        <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider mb-3 px-1">
-            <i class="fas fa-folder-open text-indigo-600 mr-1"></i> १. तुमचा बॅच फोल्डर निवडा:
-        </h3>
-
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <div onclick="selectBatch('spoken_basic')" id="folder-spoken_basic" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-indigo-600 bg-indigo-50/40 flex flex-col justify-between">
-                <div class="flex justify-between items-start">
-                    <div class="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-comments text-lg"></i>
-                    </div>
-                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">बॅच १</span>
-                </div>
-                <div class="mt-3">
-                    <h4 class="font-bold text-gray-800 text-sm">स्पोकन इंग्लिश (Basic)</h4>
-                    <p class="text-xs text-gray-400 mt-0.5">प्रा. अजित सर</p>
-                </div>
-            </div>
-
-            <div onclick="selectBatch('spoken_adv')" id="folder-spoken_adv" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-transparent flex flex-col justify-between">
-                <div class="flex justify-between items-start">
-                    <div class="bg-purple-100 text-purple-600 w-10 h-10 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-microphone-alt text-lg"></i>
-                    </div>
-                    <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">बॅच २</span>
-                </div>
-                <div class="mt-3">
-                    <h4 class="font-bold text-gray-800 text-sm">स्पोकन इंग्लिश (Advance)</h4>
-                    <p class="text-xs text-gray-400 mt-0.5">प्रा. अजित सर</p>
-                </div>
-            </div>
-
-            <div onclick="selectBatch('math_6_7')" id="folder-math_6_7" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-transparent flex flex-col justify-between">
-                <div class="flex justify-between items-start">
-                    <div class="bg-emerald-100 text-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-square-root-alt text-lg"></i>
-                    </div>
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">बॅच ३</span>
-                </div>
-                <div class="mt-3">
-                    <h4 class="font-bold text-gray-800 text-sm">गणित (6 वी व 7 वी)</h4>
-                    <p class="text-xs text-gray-400 mt-0.5">प्रा. अजित सर</p>
-                </div>
-            </div>
-
-            <div onclick="selectBatch('navodaya')" id="folder-navodaya" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-transparent flex flex-col justify-between">
-                <div class="flex justify-between items-start">
-                    <div class="bg-amber-100 text-amber-600 w-10 h-10 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-trophy text-lg"></i>
-                    </div>
-                    <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">बॅच ४</span>
-                </div>
-                <div class="mt-3">
-                    <h4 class="font-bold text-gray-800 text-sm">नवोदय विशेष बॅच</h4>
-                    <p class="text-xs text-gray-400 mt-0.5">प्रा. अजित सर</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Content Box -->
-        <div class="bg-white rounded-3xl p-4 shadow-md border border-gray-100">
-            <div class="flex flex-wrap items-center justify-between border-b pb-3 mb-4 gap-2">
-                <div>
-                    <span class="text-xs text-gray-400">निवडलेला फोल्डर:</span>
-                    <h3 id="current-batch-title" class="text-lg font-bold text-indigo-900">🗣️ स्पोकन इंग्लिश (Basic)</h3>
-                </div>
-                <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
-                    <button onclick="switchTab('live')" id="tab-live" class="px-3 py-2 rounded-lg active-tab transition">
-                        <i class="fas fa-video mr-1"></i> Zoom लाईव्ह
-                    </button>
-                    <button onclick="switchTab('recorded')" id="tab-recorded" class="px-3 py-2 rounded-lg text-gray-600 transition">
-                        <i class="fas fa-play-circle mr-1"></i> रेकॉर्डेड
-                    </button>
-                </div>
-            </div>
-
-            <div id="content-area" class="space-y-4"></div>
-        </div>
-
+    <div class="admin-box hidden" id="adminForm">
+      <h3 id="formTitle">नवीन लिंक जोडा</h3>
+      <input type="text" id="inTitle" placeholder="शीर्षक (उदा. सोमवार संध्या ६ वा.)">
+      <input type="url" id="inUrl" placeholder="लिंक येथे पेस्ट करा (https://...)">
+      <button class="btn" id="addBtn">लिंक जतन करा</button>
+      <div class="msg" id="formMsg" role="status"></div>
     </div>
 
-    <!-- PIN Modal -->
-    <div id="pin-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-3xl max-w-xs w-full p-6 shadow-2xl text-center">
-            <div class="bg-amber-100 text-amber-600 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i class="fas fa-user-shield text-2xl"></i>
-            </div>
-            <h3 class="text-lg font-bold text-gray-800">अजित सर लॉगिन</h3>
-            <p class="text-xs text-gray-500 mt-1 mb-4">पासवर्ड टाका (1234)</p>
-            <input type="password" id="pin-input" maxlength="6" placeholder="••••" class="w-full text-center text-2xl tracking-widest font-bold border-2 border-indigo-200 rounded-xl p-2.5 mb-3 focus:outline-none focus:border-indigo-600">
-            <div class="flex space-x-2">
-                <button onclick="closePinModal()" class="flex-1 bg-gray-100 text-gray-600 py-2.5 rounded-xl font-bold text-xs">रद्द करा</button>
-                <button onclick="verifyPin()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl font-bold text-xs shadow-md">अनलॉक करा</button>
-            </div>
-        </div>
+    <div id="items"></div>
+  </section>
+
+  <!-- Admin tools -->
+  <section id="adminTools" class="hidden">
+    <div class="admin-box">
+      <h3>अजित सर – डेटा साधने</h3>
+      <p class="hint" style="margin:0 0 6px">तुम्ही टाकलेली माहिती याच फोनमध्ये सेव्ह होते. विद्यार्थ्यांना दिसण्यासाठी "डेटा एक्सपोर्ट" करून <b>data.json</b> फाईल GitHub मध्ये अपलोड करा.</p>
+      <div class="tools">
+        <button class="btn" id="exportBtn">⬇ डेटा एक्सपोर्ट (data.json)</button>
+        <button class="btn-ghost btn" id="importBtn">⬆ इम्पोर्ट</button>
+        <button class="btn-danger" id="resetBtn">रीसेट</button>
+        <button class="btn-ghost btn" id="logoutBtn">लॉगआउट</button>
+      </div>
+      <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+      <div class="msg" id="toolMsg" role="status"></div>
     </div>
+  </section>
+</main>
 
-    <!-- Add Class Modal -->
-    <div id="admin-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800">क्लास जोडा</h3>
-                    <p class="text-xs text-indigo-600 font-semibold">प्रा. अजित सर</p>
-                </div>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="space-y-3.5 text-sm">
-                <div>
-                    <label class="block font-bold text-gray-700 mb-1">१. बॅच निवडा</label>
-                    <select id="form-batch" class="w-full border border-gray-300 rounded-xl p-2.5 bg-indigo-50 font-bold text-indigo-900">
-                        <option value="spoken_basic">🗣️ स्पोकन इंग्लिश (Basic)</option>
-                        <option value="spoken_adv">🚀 स्पोकन इंग्लिश (Advance)</option>
-                        <option value="math_6_7">📐 गणित (6 वी व 7 वी)</option>
-                        <option value="navodaya">🏆 नवोदय विशेष बॅच</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-gray-700 mb-1">२. प्रकार</label>
-                    <select id="form-type" onchange="toggleTimeField()" class="w-full border border-gray-300 rounded-xl p-2.5 bg-gray-50 font-semibold">
-                        <option value="live">🔵 Zoom लाईव्ह क्लास</option>
-                        <option value="recorded">🔴 रेकॉर्डेड व्हिडिओ (YouTube)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block font-medium text-gray-700 mb-1">३. टॉपिकचे नाव *</label>
-                    <input type="text" id="form-title" placeholder="उदा. English Grammar" class="w-full border border-gray-300 rounded-xl p-2.5">
-                </div>
-
-                <div id="time-box">
-                    <label class="block font-medium text-gray-700 mb-1">४. वेळ *</label>
-                    <input type="text" id="form-time" placeholder="उदा. सायंकाळी ६:०० वाजता" class="w-full border border-gray-300 rounded-xl p-2.5">
-                </div>
-
-                <div>
-                    <label id="link-label" class="block font-medium text-gray-700 mb-1">५. लिंक टाка *</label>
-                    <input type="url" id="form-link" placeholder="https://..." class="w-full border border-gray-300 rounded-xl p-2.5">
-                </div>
-
-                <button onclick="saveClassData()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold shadow-lg transition mt-2">
-                    <i class="fas fa-check-circle mr-1"></i> क्लास सेव्ह करा
-                </button>
-            </div>
-        </div>
+<!-- Login dialog -->
+<div class="dialog-bg" id="loginBg">
+  <div class="dialog" role="dialog" aria-labelledby="lgT">
+    <h3 id="lgT">अजित सर लॉगिन</h3>
+    <p class="hint">पासवर्ड टाका</p>
+    <input type="password" id="pw" placeholder="पासवर्ड" inputmode="numeric" autocomplete="off">
+    <div class="msg err" id="lgMsg" role="alert"></div>
+    <div class="tools">
+      <button class="btn" id="lgOk">लॉगिन</button>
+      <button class="btn-ghost btn" id="lgCancel">रद्द करा</button>
     </div>
+  </div>
+</div>
 
-    <script>
-        const TEACHER_PIN = "1234";
-        let isTeacherMode = false;
-        let currentBatch = 'spoken_basic';
-        let currentTab = 'live';
+<script>
+(function(){
+  var ADMIN_PASSWORD = "1234";          // पासवर्ड बदलायचा असल्यास येथे बदला
+  var LS_DATA = "fsc_data_v1", LS_ADMIN = "fsc_admin_v1";
 
-        let appData = JSON.parse(localStorage.getItem('futureStarData')) || {
-            spoken_basic: {
-                live: [{ title: 'इंग्रजी बोलण्याची सुरुवात - Day 1', time: 'सायंकाळी ६:०० ते ७:००', link: 'https://zoom.us' }],
-                recorded: []
-            },
-            spoken_adv: { live: [], recorded: [] },
-            math_6_7: { live: [], recorded: [] },
-            navodaya: { live: [], recorded: [] }
-        };
+  var BATCHES = [
+    {id:"se-basic",   name:"स्पोकन इंग्लिश – Basic",   sub:"Spoken English", icon:"🗣️"},
+    {id:"se-advance", name:"स्पोकन इंग्लिश – Advance", sub:"Spoken English", icon:"🎤"},
+    {id:"maths",      name:"गणित",                     sub:"Mathematics",    icon:"➗"},
+    {id:"navodaya",   name:"नवोदय",                    sub:"Navodaya Vidyalaya", icon:"🎓"}
+  ];
 
-        const batchNames = {
-            spoken_basic: '🗣️ स्पोकन इंग्लिश (Basic)',
-            spoken_adv: '🚀 स्पोकन इंग्लिश (Advance)',
-            math_6_7: '📐 गणित (6 वी व 7 वी)',
-            navodaya: '🏆 नवोदय विशेष बॅच'
-        };
+  var data = {}, isAdmin = false, curBatch = null, curTab = "zoom";
+  var $ = function(id){return document.getElementById(id);};
 
-        function handleTeacherAuth() {
-            if (isTeacherMode) {
-                isTeacherMode = false;
-                updateTeacherUI();
-            } else {
-                document.getElementById('pin-input').value = '';
-                document.getElementById('pin-modal').classList.remove('hidden');
-                document.getElementById('pin-input').focus();
-            }
+  /* ---------- storage ---------- */
+  function emptyData(){
+    var d = {}; BATCHES.forEach(function(b){ d[b.id] = {zoom:[], yt:[]}; }); return d;
+  }
+  function normalize(d){
+    var out = emptyData();
+    if(d && typeof d === "object"){
+      BATCHES.forEach(function(b){
+        if(d[b.id]){
+          out[b.id].zoom = Array.isArray(d[b.id].zoom) ? d[b.id].zoom : [];
+          out[b.id].yt   = Array.isArray(d[b.id].yt)   ? d[b.id].yt   : [];
         }
+      });
+    }
+    return out;
+  }
+  function save(){
+    try{ localStorage.setItem(LS_DATA, JSON.stringify(data)); }catch(e){}
+  }
+  function load(cb){
+    var local = null;
+    try{ local = JSON.parse(localStorage.getItem(LS_DATA)); }catch(e){}
+    if(local){ data = normalize(local); cb(); return; }
+    // विद्यार्थ्यांसाठी: GitHub वरील data.json वाचतो
+    fetch("data.json?v=" + Date.now())
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ data = normalize(j); cb(); })
+      .catch(function(){ data = emptyData(); cb(); });
+  }
 
-        function closePinModal() {
-            document.getElementById('pin-modal').classList.add('hidden');
-        }
+  /* ---------- helpers ---------- */
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function safeUrl(u){
+    u = (u||"").trim();
+    if(!/^https?:\/\//i.test(u)) u = "https://" + u;
+    try{ var x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ""; }catch(e){ return ""; }
+  }
+  function ytId(u){
+    var m = u.match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : "";
+  }
+  function show(id, on){ $(id).classList.toggle("hidden", !on); }
+  function flash(el, text, ok){
+    el.textContent = text; el.className = "msg " + (ok ? "ok" : "err");
+    setTimeout(function(){ el.textContent = ""; }, 3500);
+  }
 
-        function verifyPin() {
-            const pin = document.getElementById('pin-input').value.trim();
-            if (pin === TEACHER_PIN) {
-                isTeacherMode = true;
-                closePinModal();
-                updateTeacherUI();
-                alert('अजित सर लॉगिन यशस्वी!');
-            } else {
-                alert('चुकीचा पासवर्ड!');
-            }
-        }
+  /* ---------- rendering ---------- */
+  function renderHome(){
+    $("batchList").innerHTML = BATCHES.map(function(b){
+      var n = data[b.id].zoom.length + data[b.id].yt.length;
+      return '<button class="batch" data-id="'+b.id+'"><div class="ic">'+b.icon+'</div><div><b>'+esc(b.name)+'</b><span>'+esc(b.sub)+' • '+n+' लिंक</span></div></button>';
+    }).join("");
+    Array.prototype.forEach.call($("batchList").children, function(el){
+      el.onclick = function(){ openBatch(el.getAttribute("data-id")); };
+    });
+  }
+  function openBatch(id){
+    curBatch = id; curTab = "zoom";
+    var b = BATCHES.filter(function(x){return x.id===id;})[0];
+    $("batchName").textContent = b.icon + " " + b.name;
+    show("home", false); show("batchView", true);
+    renderTabs(); renderItems(); window.scrollTo(0,0);
+  }
+  function renderTabs(){
+    $("tabZoom").setAttribute("aria-selected", curTab==="zoom");
+    $("tabYt").setAttribute("aria-selected", curTab==="yt");
+    $("formTitle").textContent = curTab==="zoom" ? "नवीन Zoom क्लास लिंक जोडा" : "नवीन YouTube व्हिडिओ लिंक जोडा";
+    $("inTitle").placeholder = curTab==="zoom" ? "शीर्षक (उदा. सोमवार संध्या ६ वा.)" : "शीर्षक (उदा. Lesson 1 – Tenses)";
+    $("inUrl").placeholder = curTab==="zoom" ? "Zoom लिंक पेस्ट करा" : "YouTube लिंक पेस्ट करा";
+  }
+  function renderItems(){
+    var list = data[curBatch][curTab];
+    var box = $("items");
+    if(!list.length){
+      box.innerHTML = '<div class="empty">' + (curTab==="zoom" ? "सध्या कोणताही लाईव्ह क्लास जोडलेला नाही." : "सध्या कोणताही व्हिडिओ जोडलेला नाही.") + '</div>';
+      return;
+    }
+    box.innerHTML = list.map(function(it, i){
+      var h = '<div class="item"><div class="row"><h3>'+esc(it.t)+'</h3><div class="row">';
+      if(curTab==="zoom"){
+        h += '<a class="go" href="'+esc(it.u)+'" target="_blank" rel="noopener">Zoom जॉईन करा</a>';
+      }else{
+        h += '<button class="btn" data-play="'+i+'">▶ पहा</button>';
+      }
+      if(isAdmin) h += '<button class="btn-danger" data-del="'+i+'" aria-label="डिलीट">🗑</button>';
+      h += '</div></div><div id="pl'+i+'"></div></div>';
+      return h;
+    }).join("");
+  }
 
-        function updateTeacherUI() {
-            const addBtn = document.getElementById('add-class-btn');
-            const lockBtn = document.getElementById('admin-lock-btn');
-            const banner = document.getElementById('admin-banner');
+  /* ---------- events ---------- */
+  $("items").addEventListener("click", function(e){
+    var t = e.target.closest("button"); if(!t) return;
+    if(t.hasAttribute("data-del")){
+      var i = +t.getAttribute("data-del");
+      if(confirm("ही लिंक डिलीट करायची का?")){
+        data[curBatch][curTab].splice(i,1); save(); renderItems();
+      }
+    }else if(t.hasAttribute("data-play")){
+      var j = +t.getAttribute("data-play"), it = data[curBatch].yt[j], slot = $("pl"+j);
+      if(slot.innerHTML){ slot.innerHTML = ""; t.textContent = "▶ पहा"; return; }
+      var id = ytId(it.u);
+      if(id){
+        slot.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+id+'" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="'+esc(it.t)+'"></iframe>';
+        t.textContent = "✕ बंद करा";
+      }else{
+        window.open(it.u, "_blank", "noopener");
+      }
+    }
+  });
 
-            if (isTeacherMode) {
-                addBtn.classList.remove('hidden');
-                banner.classList.remove('hidden');
-                lockBtn.innerHTML = '<i class="fas fa-lock-open mr-1"></i> लॉक करा';
-                lockBtn.className = 'bg-red-500 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center';
-            } else {
-                addBtn.classList.add('hidden');
-                banner.classList.add('hidden');
-                lockBtn.innerHTML = '<i class="fas fa-lock mr-1.5"></i> अजित सर लॉगिन';
-                lockBtn.className = 'bg-amber-400 text-indigo-950 px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center';
-            }
-            renderContent();
-        }
+  $("tabZoom").onclick = function(){ curTab="zoom"; renderTabs(); renderItems(); };
+  $("tabYt").onclick   = function(){ curTab="yt";   renderTabs(); renderItems(); };
+  $("backBtn").onclick = function(){ show("batchView", false); show("home", true); renderHome(); window.scrollTo(0,0); };
+  $("homeTitle").onclick = $("backBtn").onclick;
 
-        function selectBatch(batchKey) {
-            currentBatch = batchKey;
-            document.getElementById('current-batch-title').innerText = batchNames[batchKey];
-            ['spoken_basic', 'spoken_adv', 'math_6_7', 'navodaya'].forEach(key => {
-                const el = document.getElementById('folder-' + key);
-                if (key === batchKey) {
-                    el.classList.add('border-indigo-600', 'bg-indigo-50/40');
-                    el.classList.remove('border-transparent');
-                } else {
-                    el.classList.remove('border-indigo-600', 'bg-indigo-50/40');
-                    el.classList.add('border-transparent');
-                }
-            });
-            renderContent();
-        }
+  $("addBtn").onclick = function(){
+    var t = $("inTitle").value.trim(), u = safeUrl($("inUrl").value);
+    if(!t){ flash($("formMsg"), "कृपया शीर्षक टाका.", false); return; }
+    if(!u || $("inUrl").value.trim()===""){ flash($("formMsg"), "कृपया योग्य लिंक टाका.", false); return; }
+    data[curBatch][curTab].unshift({t:t, u:u});
+    save(); $("inTitle").value = ""; $("inUrl").value = "";
+    flash($("formMsg"), "लिंक जतन झाली ✔", true); renderItems();
+  };
 
-        function switchTab(tab) {
-            currentTab = tab;
-            document.getElementById('tab-live').className = tab === 'live' ? 'px-3 py-2 rounded-lg active-tab transition' : 'px-3 py-2 rounded-lg text-gray-600 transition';
-            document.getElementById('tab-recorded').className = tab === 'recorded' ? 'px-3 py-2 rounded-lg active-tab transition' : 'px-3 py-2 rounded-lg text-gray-600 transition';
-            renderContent();
-        }
+  /* ---------- admin ---------- */
+  function applyAdmin(){
+    show("adminForm", isAdmin && curBatch !== null && !$("batchView").classList.contains("hidden"));
+    show("adminTools", isAdmin);
+    $("adminBtn").textContent = isAdmin ? "सर मोड ✔" : "अजित सर लॉगिन";
+    if(curBatch && !$("batchView").classList.contains("hidden")) renderItems();
+  }
+  $("adminBtn").onclick = function(){
+    if(isAdmin){ return; }
+    $("pw").value = ""; $("lgMsg").textContent = "";
+    $("loginBg").classList.add("open"); setTimeout(function(){ $("pw").focus(); }, 50);
+  };
+  $("lgCancel").onclick = function(){ $("loginBg").classList.remove("open"); };
+  function doLogin(){
+    if($("pw").value === ADMIN_PASSWORD){
+      isAdmin = true;
+      try{ localStorage.setItem(LS_ADMIN, "1"); }catch(e){}
+      $("loginBg").classList.remove("open"); applyAdmin();
+    }else{
+      $("lgMsg").textContent = "पासवर्ड चुकीचा आहे. पुन्हा प्रयत्न करा.";
+    }
+  }
+  $("lgOk").onclick = doLogin;
+  $("pw").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
+  $("logoutBtn").onclick = function(){
+    isAdmin = false; try{ localStorage.removeItem(LS_ADMIN); }catch(e){}
+    $("adminBtn").textContent = "अजित सर लॉगिन"; applyAdmin();
+  };
 
-        function openModal() {
-            if (!isTeacherMode) return;
-            document.getElementById('form-batch').value = currentBatch;
-            document.getElementById('form-type').value = currentTab;
-            toggleTimeField();
-            document.getElementById('admin-modal').classList.remove('hidden');
-        }
+  $("exportBtn").onclick = function(){
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "data.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    flash($("toolMsg"), "data.json डाउनलोड झाली. ती GitHub मध्ये अपलोड करा.", true);
+  };
+  $("importBtn").onclick = function(){ $("importFile").click(); };
+  $("importFile").onchange = function(){
+    var f = this.files[0]; if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{ data = normalize(JSON.parse(r.result)); save(); renderHome(); renderItems(); flash($("toolMsg"), "डेटा इम्पोर्ट झाला ✔", true); }
+      catch(e){ flash($("toolMsg"), "फाईल वाचता आली नाही.", false); }
+    };
+    r.readAsText(f); this.value = "";
+  };
+  $("resetBtn").onclick = function(){
+    if(confirm("या फोनमधील सर्व सेव्ह केलेला डेटा पुसायचा का?")){
+      try{ localStorage.removeItem(LS_DATA); }catch(e){}
+      data = emptyData(); renderHome(); if(curBatch) renderItems();
+      flash($("toolMsg"), "डेटा रीसेट झाला.", true);
+    }
+  };
 
-        function closeModal() {
-            document.getElementById('admin-modal').classList.add('hidden');
-        }
-
-        function toggleTimeField() {
-            const type = document.getElementById('form-type').value;
-            const timeBox = document.getElementById('time-box');
-            const linkLabel = document.getElementById('link-label');
-            if (type === 'live') {
-                timeBox.classList.remove('hidden');
-                linkLabel.innerText = '५. Zoom मीटिंग लिंक *';
-            } else {
-                timeBox.classList.add('hidden');
-                linkLabel.innerText = '४. YouTube व्हिडिओची लिंक *';
-            }
-        }
-
-        function getYouTubeEmbed(url) {
-            let id = '';
-            if (url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
-            else if (url.includes('watch?v=')) id = url.split('watch?v=')[1].split('&')[0];
-            else if (url.includes('youtube.com/live/')) id = url.split('youtube.com/live/')[1].split('?')[0];
-            return id ? `https://www.youtube.com/embed/${id}` : null;
-        }
-
-        function saveClassData() {
-            const batch = document.getElementById('form-batch').value;
-            const type = document.getElementById('form-type').value;
-            const title = document.getElementById('form-title').value.trim();
-            const time = document.getElementById('form-time').value.trim();
-            const link = document.getElementById('form-link').value.trim();
-
-            if (!title || !link) {
-                alert('कृपया टॉपिकचे नाव आणि लिंक नक्की भरा!');
-                return;
-            }
-
-            appData[batch][type].push({
-                title: title,
-                time: time || 'वेळ दिलेली नाही',
-                link: link
-            });
-
-            localStorage.setItem('futureStarData', JSON.stringify(appData));
-
-            document.getElementById('form-title').value = '';
-            document.getElementById('form-time').value = '';
-            document.getElementById('form-link').value = '';
-            closeModal();
-            renderContent();
-            alert('यशस्वी! क्लास सेव्ह झाला आहे.');
-        }
-
-        function deleteEntry(index) {
-            if (!isTeacherMode) return;
-            if (confirm('हा क्लास डिलीट करायचा का?')) {
-                appData[currentBatch][currentTab].splice(index, 1);
-                localStorage.setItem('futureStarData', JSON.stringify(appData));
-                renderContent();
-            }
-        }
-
-        function renderContent() {
-            const container = document.getElementById('content-area');
-            const items = appData[currentBatch][currentTab];
-
-            if (items.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-gray-300 text-gray-500">
-                        <i class="fas fa-folder-open text-3xl mb-2 text-indigo-300"></i>
-                        <p class="font-semibold text-sm">सध्या या फोल्डरमध्ये कोणतीही माहिती नाही.</p>
-                        <p class="text-xs mt-1">${isTeacherMode ? "वरच्या <b>'+ क्लास जोडा'</b> बटनातून नवीन माहिती टाका." : "लवकरच नवीन लेक्चर्स अपडेट केले जातील."}</p>
-                    </div>`;
-                return;
-            }
-
-            if (currentTab === 'live') {
-                container.innerHTML = items.map((item, idx) => `
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-2xl border border-indigo-100 flex flex-col justify-between relative shadow-sm">
-                        ${isTeacherMode ? `
-                        <button onclick="deleteEntry(${idx})" class="absolute top-3 right-3 bg-red-100 text-red-600 hover:bg-red-200 w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
-                            <i class="fas fa-trash-alt text-xs"></i>
-                        </button>` : ''}
-                        <div>
-                            <span class="bg-blue-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full inline-flex items-center">
-                                <i class="fas fa-video mr-1"></i> ZOOM LIVE CLASS
-                            </span>
-                            <h4 class="font-bold text-gray-800 text-base mt-2.5 pr-8">${item.title}</h4>
-                            <p class="text-xs text-gray-600 mt-1"><i class="fas fa-chalkboard-teacher mr-1 text-indigo-600"></i> मार्गदर्शक: <b>प्रा. अजित सर</b></p>
-                            <p class="text-xs text-gray-600 mt-1"><i class="far fa-clock mr-1 text-indigo-600"></i> वेळ: ${item.time}</p>
-                        </div>
-                        <a href="${item.link}" target="_blank" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-center py-2.5 rounded-xl font-bold text-sm shadow transition flex items-center justify-center">
-                            <i class="fas fa-external-link-alt mr-2"></i> Zoom क्लास जॉईन करा
-                        </a>
-                    </div>`).join('');
-            } else {
-                container.innerHTML = items.map((item, idx) => {
-                    const embed = getYouTubeEmbed(item.link);
-                    return `
-                    <div class="bg-slate-50 rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                        ${embed ? `<iframe class="w-full h-52" src="${embed}" frameborder="0" allowfullscreen></iframe>` : `
-                        <div class="bg-slate-800 h-40 flex flex-col items-center justify-center text-white p-4">
-                            <i class="fas fa-play-circle text-4xl text-amber-400 mb-2"></i>
-                            <a href="${item.link}" target="_blank" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold">रेकॉर्डेड व्हिडिओ पहा</a>
-                        </div>`}
-                        <div class="p-3.5 flex justify-between items-center">
-                            <div>
-                                <span class="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded">RECORDED LECTURE</span>
-                                <h4 class="font-bold text-gray-800 text-sm mt-1">${item.title}</h4>
-                                <p class="text-xs text-gray-500">प्रा. अजित सर • Future Star Classes</p>
-                            </div>
-                            ${isTeacherMode ? `
-                            <button onclick="deleteEntry(${idx})" class="bg-red-100 text-red-600 hover:bg-red-200 w-8 h-8 rounded-full flex items-center justify-center">
-                                <i class="fas fa-trash-alt text-xs"></i>
-                            </button>` : ''}
-                        </div>
-                    </div>`;
-                }).join('');
-            }
-        }
-
-        renderContent();
-    </script>
+  /* ---------- start ---------- */
+  load(function(){
+    try{ isAdmin = localStorage.getItem(LS_ADMIN) === "1"; }catch(e){}
+    renderHome(); applyAdmin();
+  });
+})();
+</script>
 </body>
 </html>
