@@ -88,6 +88,7 @@ input[type=text],input[type=url],input[type=password]{width:100%;font:inherit;pa
       <input type="url" id="inUrl" placeholder="लिंक येथे पेस्ट करा (https://...)">
       <button class="btn" id="addBtn">लिंक जतन करा</button>
       <div class="msg" id="formMsg" role="status"></div>
+      <div class="msg" id="syncMsg" role="status"></div>
     </div>
 
     <div id="items"></div>
@@ -106,6 +107,12 @@ input[type=text],input[type=url],input[type=password]{width:100%;font:inherit;pa
       </div>
       <input type="file" id="importFile" accept=".json,application/json" class="hidden">
       <div class="msg" id="toolMsg" role="status"></div>
+      <div class="msg" id="syncMsg2" role="status"></div>
+      <h3 style="margin-top:14px">ऑटो-सेव्ह (GitHub) – एकदाच सेटिंग</h3>
+      <input type="text" id="ghOwner" placeholder="GitHub युजरनेम (उदा. Anwriter)" autocapitalize="off">
+      <input type="text" id="ghRepo" placeholder="Repository नाव (उदा. futurestarclasses)" autocapitalize="off">
+      <input type="password" id="ghToken" placeholder="GitHub टोकन (github_pat_...)" autocomplete="off">
+      <button class="btn" id="ghSave">सेटिंग जतन करा</button>
     </div>
   </section>
 </main>
@@ -155,8 +162,35 @@ input[type=text],input[type=url],input[type=password]{width:100%;font:inherit;pa
     }
     return out;
   }
+  var LS_GH = "fsc_gh_v1", pushTimer = null;
+  function ghCfg(){ try{ return JSON.parse(localStorage.getItem(LS_GH)); }catch(e){ return null; } }
+  function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+  function syncStatus(text, ok){
+    ["syncMsg","syncMsg2"].forEach(function(id){
+      var el = $(id); if(el){ el.textContent = text; el.className = "msg " + (ok ? "ok" : "err"); }
+    });
+  }
+  function pushGH(){
+    var c = ghCfg(); if(!c || !c.token || !c.owner || !c.repo) return;
+    syncStatus("GitHub वर पाठवत आहे…", true);
+    var url = "https://api.github.com/repos/" + c.owner + "/" + c.repo + "/contents/data.json";
+    var h = {"Authorization":"Bearer " + c.token, "Accept":"application/vnd.github+json"};
+    fetch(url + "?t=" + Date.now(), {headers:h})
+      .then(function(r){ return r.status === 404 ? null : r.json(); })
+      .then(function(j){
+        var body = {message:"Update data.json", content:b64(JSON.stringify(data, null, 2))};
+        if(j && j.sha) body.sha = j.sha;
+        return fetch(url, {method:"PUT", headers:h, body:JSON.stringify(body)});
+      })
+      .then(function(r){
+        if(r.ok) syncStatus("✔ GitHub वर सेव्ह झाले. विद्यार्थ्यांना १-२ मिनिटांत दिसेल.", true);
+        else syncStatus("GitHub वर पाठवता आले नाही (कोड " + r.status + "). टोकन/नाव तपासा.", false);
+      })
+      .catch(function(){ syncStatus("इंटरनेट अडचण. पुन्हा प्रयत्न करा.", false); });
+  }
   function save(){
     try{ localStorage.setItem(LS_DATA, JSON.stringify(data)); }catch(e){}
+    clearTimeout(pushTimer); pushTimer = setTimeout(pushGH, 700);
   }
   function load(cb){
     var local = null;
@@ -201,7 +235,7 @@ input[type=text],input[type=url],input[type=password]{width:100%;font:inherit;pa
     var b = BATCHES.filter(function(x){return x.id===id;})[0];
     $("batchName").textContent = b.icon + " " + b.name;
     show("home", false); show("batchView", true);
-    renderTabs(); renderItems(); window.scrollTo(0,0);
+    renderTabs(); renderItems(); applyAdmin(); window.scrollTo(0,0);
   }
   function renderTabs(){
     $("tabZoom").setAttribute("aria-selected", curTab==="zoom");
@@ -253,7 +287,7 @@ input[type=text],input[type=url],input[type=password]{width:100%;font:inherit;pa
 
   $("tabZoom").onclick = function(){ curTab="zoom"; renderTabs(); renderItems(); };
   $("tabYt").onclick   = function(){ curTab="yt";   renderTabs(); renderItems(); };
-  $("backBtn").onclick = function(){ show("batchView", false); show("home", true); renderHome(); window.scrollTo(0,0); };
+  $("backBtn").onclick = function(){ show("batchView", false); show("home", true); show("adminForm", false); renderHome(); window.scrollTo(0,0); };
   $("homeTitle").onclick = $("backBtn").onclick;
 
   $("addBtn").onclick = function(){
@@ -317,6 +351,16 @@ input[type=text],input[type=url],input[type=password]{width:100%;font:inherit;pa
       data = emptyData(); renderHome(); if(curBatch) renderItems();
       flash($("toolMsg"), "डेटा रीसेट झाला.", true);
     }
+  };
+
+  var g = ghCfg();
+  if(g){ $("ghOwner").value = g.owner || ""; $("ghRepo").value = g.repo || ""; $("ghToken").value = g.token || ""; }
+  $("ghSave").onclick = function(){
+    var c = {owner:$("ghOwner").value.trim(), repo:$("ghRepo").value.trim(), token:$("ghToken").value.trim()};
+    if(!c.owner || !c.repo || !c.token){ flash($("toolMsg"), "तिन्ही माहिती भरा.", false); return; }
+    try{ localStorage.setItem(LS_GH, JSON.stringify(c)); }catch(e){}
+    flash($("toolMsg"), "सेटिंग जतन झाली. आता पाठवून तपासतो…", true);
+    pushGH();
   };
 
   /* ---------- start ---------- */
