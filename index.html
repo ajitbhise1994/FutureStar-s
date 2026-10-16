@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Ajit Sir Spoken English Classes - PDF Library</title>
     
-    <!-- Tailwind CSS for Modern UI -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Mozilla PDF.js (Google Drive सारख्या स्मूथ व्ह्यूसाठी) -->
+    <!-- Mozilla PDF.js + Direct Worker (मोबाईलवर 100% बिना-अडथळा चालण्यासाठी) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
 
     <style>
         body {
@@ -20,7 +21,6 @@
             background-color: #f3f4f6;
             -webkit-tap-highlight-color: transparent;
         }
-        /* Google Drive Style Dark PDF Viewer Background */
         #pdfViewerContainer {
             background-color: #323639;
             overflow-y: auto;
@@ -29,106 +29,119 @@
         }
         .pdf-page-canvas {
             display: block;
-            margin: 16px auto;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            margin: 14px auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
             background-color: white;
             border-radius: 4px;
             max-width: 100%;
             height: auto;
         }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #6b7280;
-            border-radius: 3px;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #6b7280; border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- ================= HEADER ================= -->
-    <header class="bg-gradient-to-r from-indigo-700 via-blue-700 to-indigo-800 text-white shadow-lg sticky top-0 z-30">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+    <header class="bg-gradient-to-r from-indigo-800 via-blue-700 to-indigo-900 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-2">
             <div>
-                <span class="text-xs uppercase tracking-wider bg-amber-400 text-indigo-950 font-bold px-2 py-0.5 rounded">Digital Study Locker</span>
-                <h1 class="text-xl md:text-2xl font-bold mt-1">Ajit Sir Spoken English Classes</h1>
-                <p class="text-xs text-blue-100">तुमच्या सर्व महत्त्वाच्या PDF नोट्स एकाच ठिकाणी</p>
+                <span class="text-[11px] uppercase tracking-wider bg-amber-400 text-indigo-950 font-bold px-2 py-0.5 rounded">Digital Notes Locker</span>
+                <h1 class="text-lg md:text-2xl font-bold mt-0.5">Ajit Sir Spoken English Classes</h1>
+                <p class="text-xs text-blue-100">तुमच्या सर्व PDF नोट्स एकाच ठिकाणी</p>
             </div>
-            <button onclick="openUploadModal()" class="bg-amber-400 hover:bg-amber-300 text-indigo-950 font-bold px-4 py-2.5 rounded-xl shadow-md flex items-center gap-2 transition transform active:scale-95 text-sm md:text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                <span>PDF जोडा</span>
-            </button>
+
+            <div class="flex items-center gap-2">
+                <!-- शिक्षक लॉगिन बटन -->
+                <button onclick="toggleTeacherMode()" id="teacherModeBtn" class="bg-indigo-950/60 hover:bg-indigo-950 border border-indigo-400/40 text-xs font-semibold px-3 py-2 rounded-xl transition">
+                    👨‍🏫 शिक्षक पॅनेल
+                </button>
+                <!-- विद्यार्थ्यांसाठी स्वतःची PDF जोडण्याचे बटन -->
+                <button onclick="openUploadModal('student')" class="bg-amber-400 hover:bg-amber-300 text-indigo-950 font-bold px-3.5 py-2 rounded-xl shadow-md flex items-center gap-1.5 text-xs md:text-sm">
+                    <span>+ PDF जोडा</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= TEACHER ADMIN BAR (फक्त शिक्षकांसाठी) ================= -->
+        <div id="teacherAdminBar" class="hidden bg-amber-50 border-b-2 border-amber-400 text-gray-900 px-4 py-3">
+            <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                    <span class="text-xs font-bold bg-amber-400 text-indigo-950 px-2 py-0.5 rounded">TEACHER MODE ON</span>
+                    <p class="text-xs text-gray-700 mt-1">
+                        <b>सूचना:</b> आधी <b>"१. क्लासची PDF जोडा"</b> मधून तुमच्या सर्व PDF टाका आणि नंतर <b>"२. विद्यार्थ्यांसाठी ॲप डाउनलोड करा"</b> वर क्लिक करून ती फाईल WhatsApp ग्रुपवर पाठवा.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 shrink-0">
+                    <button onclick="openUploadModal('teacher')" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow">
+                        १. + क्लासची PDF जोडा
+                    </button>
+                    <button onclick="exportStudentAppFile()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow flex items-center gap-1">
+                        <span>२. 📲 विद्यार्थ्यांसाठी ॲप डाउनलोड करा</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- ================= SEARCH & FILTERS ================= -->
+    <!-- ================= SEARCH & CATEGORY TABS ================= -->
     <section class="max-w-5xl w-full mx-auto px-4 pt-4">
-        <!-- Search Bar -->
-        <div class="relative mb-4">
+        <div class="relative mb-3">
             <input type="text" id="searchInput" oninput="renderPDFList()" placeholder="PDF चे नाव किंवा विषय शोधा..." 
-                class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 outline-none shadow-sm text-gray-800">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-4 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:border-indigo-600 outline-none shadow-sm text-sm text-gray-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3.5 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
         </div>
 
-        <!-- Category Pills -->
-        <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar" id="categoryTabs">
-            <button onclick="setCategory('All')" data-cat="All" class="cat-btn bg-indigo-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap shadow-sm">सर्व (All)</button>
-            <button onclick="setCategory('Spoken English')" data-cat="Spoken English" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap">Spoken English</button>
-            <button onclick="setCategory('English Grammar')" data-cat="English Grammar" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap">English Grammar</button>
-            <button onclick="setCategory('नवोदय परीक्षा')" data-cat="नवोदय परीक्षा" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap">नवोदय परीक्षा</button>
-            <button onclick="setCategory('गणित व विज्ञान')" data-cat="गणित व विज्ञान" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap">गणित व विज्ञान</button>
+        <div class="flex gap-2 overflow-x-auto pb-2" id="categoryTabs">
+            <button onclick="setCategory('All')" data-cat="All" class="cat-btn bg-indigo-700 text-white px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap shadow-sm">सर्व (All)</button>
+            <button onclick="setCategory('Spoken English')" data-cat="Spoken English" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap">Spoken English</button>
+            <button onclick="setCategory('English Grammar')" data-cat="English Grammar" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap">English Grammar</button>
+            <button onclick="setCategory('नवोदय परीक्षा')" data-cat="नवोदय परीक्षा" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap">नवोदय परीक्षा</button>
+            <button onclick="setCategory('गणित व विज्ञान')" data-cat="गणित व विज्ञान" class="cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap">गणित व विज्ञान</button>
         </div>
     </section>
 
-    <!-- ================= PDF CARDS LIST ================= -->
+    <!-- ================= PDF CARDS GRID ================= -->
     <main class="max-w-5xl w-full mx-auto px-4 py-4 flex-1">
-        <div id="pdfGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <!-- PDF Cards येथे आपोआप तयार होतील -->
-        </div>
+        <div id="pdfGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
 
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300 mt-4 p-6">
-            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-            </div>
-            <h3 class="text-lg font-bold text-gray-800">कोणतीही PDF सापडली नाही!</h3>
-            <p class="text-sm text-gray-500 mt-1 max-w-md mx-auto">वरच्या कोपऱ्यातील <b>"+ PDF जोडा"</b> बटनावर क्लिक करून क्लासच्या PDF आपल्या ॲपमध्ये सेव्ह करा.</p>
+        <div id="emptyState" class="hidden text-center py-14 bg-white rounded-2xl border border-dashed border-gray-300 mt-4 p-6">
+            <h3 class="text-base font-bold text-gray-800">कोणतीही PDF सापडली नाही!</h3>
+            <p class="text-xs text-gray-500 mt-1 max-w-md mx-auto">
+                शिक्षकांनी आपल्या नोट्स जोडण्यासाठी वरच्या <b>"👨‍🏫 शिक्षक पॅनेल"</b> (PIN: 1234) वर क्लिक करावे किंवा विद्यार्थ्यांनी <b>"+ PDF जोडा"</b> वर क्लिक करावे.
+            </p>
         </div>
     </main>
 
-    <!-- ================= UPLOAD / ADD PDF MODAL ================= -->
+    <!-- ================= ADD PDF MODAL ================= -->
     <div id="uploadModal" class="fixed inset-0 bg-black/60 z-40 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h2 class="text-lg font-bold text-gray-800">नवीन PDF साठवा</h2>
+                <div>
+                    <span id="modalRoleBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">STUDENT</span>
+                    <h2 id="uploadModalHeading" class="text-base font-bold text-gray-800 mt-0.5">नवीन PDF साठवा</h2>
+                </div>
                 <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
             </div>
 
-            <!-- Tabs: Local File vs Google Drive Link -->
+            <!-- Tabs: Local PDF vs Google Drive Link -->
             <div class="grid grid-cols-2 gap-2 bg-gray-100 p-1 rounded-xl mb-4">
-                <button id="tabLocal" onclick="switchAddMode('local')" class="py-2 text-sm font-bold rounded-lg bg-white text-indigo-700 shadow-sm">मोबाईलमधील फाईल</button>
-                <button id="tabDrive" onclick="switchAddMode('drive')" class="py-2 text-sm font-bold rounded-lg text-gray-600">Google Drive लिंक</button>
+                <button type="button" id="tabLocal" onclick="switchAddMode('local')" class="py-2 text-xs font-bold rounded-lg bg-white text-indigo-700 shadow-sm">📁 मोबाईलमधील PDF</button>
+                <button type="button" id="tabDrive" onclick="switchAddMode('drive')" class="py-2 text-xs font-bold rounded-lg text-gray-600">🔗 Google Drive लिंक</button>
             </div>
 
             <form id="addPdfForm" onsubmit="handleSavePDF(event)">
                 <div class="mb-3">
                     <label class="block text-xs font-bold text-gray-700 mb-1">PDF चे नाव (Title) *</label>
-                    <input type="text" id="pdfTitle" required placeholder="उदा. Tenses Complete Notes - Part 1" 
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:border-indigo-600 outline-none text-sm">
+                    <input type="text" id="pdfTitle" required placeholder="उदा. English Grammar - Conjunctions" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:border-indigo-600 outline-none text-sm">
                 </div>
 
                 <div class="mb-3">
                     <label class="block text-xs font-bold text-gray-700 mb-1">विषय निवडा (Category) *</label>
-                    <select id="pdfCategory" class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:border-indigo-600 outline-none text-sm bg-white">
+                    <select id="pdfCategory" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:border-indigo-600 outline-none text-sm bg-white">
                         <option value="Spoken English">Spoken English</option>
                         <option value="English Grammar">English Grammar</option>
                         <option value="नवोदय परीक्षा">नवोदय परीक्षा (Navodaya)</option>
@@ -136,37 +149,38 @@
                     </select>
                 </div>
 
-                <!-- Mode 1: Local File Input -->
+                <!-- Local File Box -->
                 <div id="localFileInputBox" class="mb-4">
-                    <label class="block text-xs font-bold text-gray-700 mb-1">मोबाईलमधून PDF निवडा *</label>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">मोबाईलमधून PDF फाईल निवडा *</label>
                     <input type="file" id="pdfFileInput" accept="application/pdf" onchange="autoFillTitle(this)"
-                        class="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-300 rounded-xl p-1.5">
-                    <p class="text-[11px] text-gray-500 mt-1">ही PDF तुमच्या ॲपमध्ये कायमस्वरूपी सेव्ह राहील (इंटरनेटशिवाय उघडेल).</p>
+                        class="w-full text-xs text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-gray-300 rounded-xl p-1.5">
+                    <p class="text-[11px] text-emerald-700 font-medium mt-1">✓ ही फाईल इंटरनेटशिवाय (Offline) सर्व मोबाईलवर १००% उघडते.</p>
                 </div>
 
-                <!-- Mode 2: Google Drive Link Input -->
+                <!-- Google Drive Link Box -->
                 <div id="driveLinkInputBox" class="mb-4 hidden">
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Google Drive PDF Share Link *</label>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Google Drive Share Link *</label>
                     <input type="url" id="pdfDriveUrl" placeholder="https://drive.google.com/file/d/.../view" 
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:border-indigo-600 outline-none text-sm">
-                    <p class="text-[11px] text-gray-500 mt-1">टीप: Google Drive वर फाईलचा ऍक्सेस 'Anyone with the link' ठेवा.</p>
+                        class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:border-indigo-600 outline-none text-sm">
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2 text-[11px] text-amber-900">
+                        <b>महत्त्वाची टीप:</b> Google Drive मधील PDF वर तीन टिंबांवर क्लिक करून <b>Manage Access &rarr; Anyone with the link</b> करणे आवश्यक आहे, तरच ती विद्यार्थ्यांना दिसेल!
+                    </div>
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-semibold">रद्द करा</button>
-                    <button type="submit" id="saveBtn" class="px-5 py-2.5 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-bold shadow-md">सेव्ह करा</button>
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 text-xs font-semibold">रद्द करा</button>
+                    <button type="submit" id="saveBtn" class="px-5 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold shadow-md">सेव्ह करा</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ================= GOOGLE DRIVE STYLE FULLSCREEN PDF VIEWER ================= -->
+    <!-- ================= GOOGLE DRIVE STYLE PDF VIEWER ================= -->
     <div id="viewerModal" class="fixed inset-0 z-50 hidden flex flex-col bg-[#323639]">
-        
-        <!-- Top Action Bar (Google Drive Look) -->
-        <div class="bg-[#202124] text-white px-4 py-3 flex items-center justify-between shadow-md z-10">
-            <div class="flex items-center gap-3 overflow-hidden">
-                <button onclick="closeViewer()" class="p-1.5 hover:bg-gray-700 rounded-full transition" title="मागे जा">
+        <!-- Top Bar -->
+        <div class="bg-[#202124] text-white px-3 md:px-5 py-3 flex items-center justify-between shadow-md z-10">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+                <button onclick="closeViewer()" class="p-1.5 hover:bg-gray-700 rounded-full transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
@@ -177,11 +191,14 @@
                 </div>
             </div>
 
-            <!-- Page Counter & Download -->
-            <div class="flex items-center gap-2">
-                <span id="pageIndicator" class="bg-gray-800 text-gray-200 text-xs px-3 py-1.5 rounded-lg font-mono">
-                    1 / 1
-                </span>
+            <div class="flex items-center gap-2 shrink-0">
+                <span id="pageIndicator" class="bg-gray-800 text-gray-200 text-xs px-2.5 py-1 rounded-lg font-mono">1 / 1</span>
+                
+                <!-- Google Drive Direct Open Fallback Button -->
+                <a id="externalDriveBtn" href="#" target="_blank" class="hidden bg-amber-400 text-indigo-950 text-xs font-bold px-3 py-1.5 rounded-lg">
+                    Drive मध्ये उघडा ↗
+                </a>
+
                 <button id="downloadCurrentBtn" onclick="downloadCurrentPDF()" class="p-2 hover:bg-gray-700 rounded-full transition" title="Download PDF">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -190,107 +207,111 @@
             </div>
         </div>
 
-        <!-- Main Scrollable Canvas Area (For Local PDFs) -->
+        <!-- Local/Embedded PDF Canvas Viewer -->
         <div id="pdfViewerContainer" class="flex-1 relative px-2 md:px-6 py-2">
             <div id="pdfLoadingSpinner" class="text-center py-20 text-white">
                 <div class="animate-spin rounded-full h-10 w-10 border-4 border-amber-400 border-t-transparent mx-auto mb-3"></div>
-                <p class="text-sm">PDF उघडत आहे, कृपया प्रतीक्षा करा...</p>
+                <p class="text-sm">PDF लोड होत आहे...</p>
             </div>
             <div id="pdfPagesWrapper"></div>
         </div>
 
-        <!-- Google Drive Iframe Container (For Direct Drive Links) -->
+        <!-- Google Drive Preview Iframe -->
         <iframe id="driveIframeViewer" class="flex-1 w-full hidden border-0 bg-[#323639]" allow="autoplay"></iframe>
 
-        <!-- Floating Bottom Zoom Bar (Just like Google Drive) -->
+        <!-- Floating Bottom Zoom Controls -->
         <div id="zoomControlsBar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#202124]/95 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-4 border border-gray-700 z-20">
-            <button onclick="changeZoom(-0.25)" class="hover:text-amber-400 font-bold text-xl px-2" title="Zoom Out">&minus;</button>
+            <button onclick="changeZoom(-0.25)" class="hover:text-amber-400 font-bold text-xl px-2">&minus;</button>
             <span id="zoomLevelText" class="text-xs font-mono min-w-[48px] text-center">100%</span>
-            <button onclick="changeZoom(0.25)" class="hover:text-amber-400 font-bold text-xl px-2" title="Zoom In">&#43;</button>
+            <button onclick="changeZoom(0.25)" class="hover:text-amber-400 font-bold text-xl px-2">&#43;</button>
             <div class="h-4 w-[1px] bg-gray-600"></div>
-            <button onclick="resetZoom()" class="text-xs text-amber-400 font-semibold hover:underline">Fit</button>
+            <button onclick="resetZoom()" class="text-xs text-amber-400 font-semibold">Fit</button>
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <!-- ================= MAIN APPLICATION SCRIPT ================= -->
     <script>
-        // PDF.js Worker सेटअप
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        /*__EMBEDDED_DATA_START__*/
+        let teacherEmbeddedPDFs = [];
+        /*__EMBEDDED_DATA_END__*/
 
-        // =========================================================================
-        // १. शिक्षकांसाठी पूर्व-लोड केलेल्या (Pre-loaded) Google Drive PDF यादी
-        // तुम्ही येथे तुमच्या क्लासच्या Google Drive लिंक्स कायमस्वरूपी टाकू शकता
-        // =========================================================================
-        const teacherPreloadedPDFs = [
-            // उदाहरण म्हणून खाली फॉरमॅट दिला आहे. तुम्ही तुमच्या खऱ्या Google Drive लिंक्स इथे टाकू शकता:
-            /*
-            {
-                id: 'preload_1',
-                title: 'English Conjunctions Complete Guide',
-                category: 'English Grammar',
-                type: 'drive',
-                driveUrl: 'https://drive.google.com/file/d/YOUR_FILE_ID_HERE/view',
-                dateAdded: 'अजित सर (Official Notes)'
-            }
-            */
-        ];
-
-        // ग्लोबल व्हेरिएबल्स
-        let db;
+        let db = null;
+        let studentLocalPDFs = [];
         let allPDFs = [];
         let activeCategory = 'All';
-        let currentAddMode = 'local'; // 'local' किंवा 'drive'
+        let currentAddMode = 'local';
+        let uploadRole = 'student'; // 'teacher' or 'student'
+        let isTeacherMode = false;
         let currentPdfDoc = null;
-        let currentZoomScale = 1.2;
+        let currentZoomScale = 1.0;
         let currentOpenPdfItem = null;
 
-        // =========================================================================
-        // २. IndexedDB डेटाबेस सेटअप (विद्यार्थ्यांच्या मोबाईलमध्ये मोठ्या PDF साठवण्यासाठी)
-        // =========================================================================
-        const request = indexedDB.open('AjitSirClassPDFDatabase', 1);
-
-        request.onupgradeneeded = function(event) {
-            db = event.target.result;
-            if (!db.objectStoreNames.contains('pdfs')) {
-                db.createObjectStore('pdfs', { keyPath: 'id' });
-            }
-        };
-
-        request.onsuccess = function(event) {
-            db = event.target.result;
+        // IndexedDB सुरू करणे (विद्यार्थ्यांच्या वैयक्तिक सेव्ह केलेल्या फाईल्ससाठी)
+        try {
+            const req = indexedDB.open('AjitSirClassDB_v2', 1);
+            req.onupgradeneeded = function(e) {
+                db = e.target.result;
+                if (!db.objectStoreNames.contains('student_pdfs')) {
+                    db.createObjectStore('student_pdfs', { keyPath: 'id' });
+                }
+            };
+            req.onsuccess = function(e) {
+                db = e.target.result;
+                loadAllPDFs();
+            };
+            req.onerror = function() {
+                loadAllPDFs();
+            };
+        } catch (err) {
             loadAllPDFs();
-        };
+        }
 
-        request.onerror = function() {
-            alert('डेटाबेस लोड करताना अडचण आली!');
-        };
-
-        // सर्व PDF लोड करणे
         function loadAllPDFs() {
-            const transaction = db.transaction(['pdfs'], 'readonly');
-            const store = transaction.objectStore('pdfs');
-            const getAllReq = store.getAll();
-
-            getAllReq.onsuccess = function() {
-                const studentSavedPDFs = getAllReq.result.sort((a, b) => b.timestamp - a.timestamp);
-                allPDFs = [...teacherPreloadedPDFs, ...studentSavedPDFs];
+            if (!db) {
+                allPDFs = [...teacherEmbeddedPDFs];
+                renderPDFList();
+                return;
+            }
+            const tx = db.transaction(['student_pdfs'], 'readonly');
+            const store = tx.objectStore('student_pdfs');
+            const getAll = store.getAll();
+            getAll.onsuccess = function() {
+                studentLocalPDFs = getAll.result.sort((a, b) => b.timestamp - a.timestamp);
+                allPDFs = [...teacherEmbeddedPDFs, ...studentLocalPDFs];
                 renderPDFList();
             };
         }
 
-        // =========================================================================
-        // ३. स्क्रीनवर PDF कार्ड्स दाखवणे (Render UI)
-        // =========================================================================
+        // शिक्षक पॅनेल चालू/बंद करणे (PIN: 1234)
+        function toggleTeacherMode() {
+            if (isTeacherMode) {
+                isTeacherMode = false;
+                document.getElementById('teacherAdminBar').classList.add('hidden');
+                document.getElementById('teacherModeBtn').innerText = '👨‍🏫 शिक्षक पॅनेल';
+                renderPDFList();
+                return;
+            }
+            const pin = prompt('शिक्षक पॅनेल उघडण्यासाठी पासवर्ड (PIN) टाका (डिफॉल्ट PIN: 1234):');
+            if (pin === '1234') {
+                isTeacherMode = true;
+                document.getElementById('teacherAdminBar').classList.remove('hidden');
+                document.getElementById('teacherModeBtn').innerText = '✖ शिक्षक पॅनेल बंद करा';
+                renderPDFList();
+            } else if (pin !== null) {
+                alert('चुकीचा PIN! कृपया 1234 टाका.');
+            }
+        }
+
+        // सर्व PDF कार्ड्स स्क्रीनवर दाखवणे
         function renderPDFList() {
             const grid = document.getElementById('pdfGrid');
             const emptyState = document.getElementById('emptyState');
             const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
 
             const filtered = allPDFs.filter(item => {
-                const matchesCat = (activeCategory === 'All') || (item.category === activeCategory);
-                const matchesSearch = item.title.toLowerCase().includes(searchQuery) || 
-                                      item.category.toLowerCase().includes(searchQuery);
-                return matchesCat && matchesSearch;
+                const matchCat = (activeCategory === 'All') || (item.category === activeCategory);
+                const matchSearch = item.title.toLowerCase().includes(searchQuery) || item.category.toLowerCase().includes(searchQuery);
+                return matchCat && matchSearch;
             });
 
             grid.innerHTML = '';
@@ -302,20 +323,24 @@
             emptyState.classList.add('hidden');
 
             filtered.forEach(pdf => {
-                const isDrive = pdf.type === 'drive';
-                const badgeColor = isDrive ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                const badgeText = isDrive ? 'Google Drive' : 'Offline Saved';
+                const isTeacherFile = pdf.owner === 'teacher';
+                const badgeClass = isTeacherFile 
+                    ? 'bg-indigo-100 text-indigo-800 border-indigo-200' 
+                    : 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                const badgeLabel = isTeacherFile ? 'अजित सर (Official Notes)' : 'Saved Note';
+
+                const canDelete = (!isTeacherFile) || isTeacherMode;
 
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-2xl p-4 shadow-sm hover:shadow-md border border-gray-200 flex flex-col justify-between transition';
                 card.innerHTML = `
                     <div>
                         <div class="flex items-start justify-between gap-2 mb-3">
-                            <div class="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 font-bold text-xs border border-red-100">
+                            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 font-bold text-xs border border-red-100">
                                 PDF
                             </div>
-                            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeColor}">
-                                ${badgeText}
+                            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeClass}">
+                                ${badgeLabel}
                             </span>
                         </div>
                         <h3 class="font-bold text-gray-800 text-base line-clamp-2 mb-1">${escapeHTML(pdf.title)}</h3>
@@ -324,14 +349,12 @@
                     </div>
 
                     <div class="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100">
-                        <button onclick="openPDFViewer('${pdf.id}')" class="flex-1 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold py-2 px-3 rounded-xl text-sm transition flex items-center justify-center gap-1.5">
-                            <span>उघडा (Open)</span>
+                        <button onclick="openPDFViewer('${pdf.id}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-xl text-xs md:text-sm transition">
+                            📖 उघडा (Open PDF)
                         </button>
-                        ${!String(pdf.id).startsWith('preload_') ? `
-                        <button onclick="deletePDF('${pdf.id}')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="काढून टाका">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
+                        ${canDelete ? `
+                        <button onclick="deletePDF('${pdf.id}', '${pdf.owner}')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="काढून टाका">
+                            🗑
                         </button>
                         ` : ''}
                     </div>
@@ -340,9 +363,6 @@
             });
         }
 
-        // =========================================================================
-        // ४. नवीन PDF सेव्ह करणे (मोबाईल फाईल किंवा Google Drive लिंक)
-        // =========================================================================
         function autoFillTitle(input) {
             const titleInput = document.getElementById('pdfTitle');
             if (input.files && input.files[0] && !titleInput.value) {
@@ -350,14 +370,13 @@
             }
         }
 
+        // नवीन PDF जोडणे (Teacher किंवा Student)
         function handleSavePDF(e) {
             e.preventDefault();
             const title = document.getElementById('pdfTitle').value.trim();
             const category = document.getElementById('pdfCategory').value;
             const saveBtn = document.getElementById('saveBtn');
-
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('mr-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            const dateStr = new Date().toLocaleDateString('mr-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
             if (currentAddMode === 'local') {
                 const fileInput = document.getElementById('pdfFileInput');
@@ -371,31 +390,25 @@
                 saveBtn.innerText = 'सेव्ह होत आहे...';
                 saveBtn.disabled = true;
 
+                // Base64 फॉरमॅटमध्ये वाचणे जेणेकरून फाईल सर्व विद्यार्थ्यांच्या मोबाईलमध्ये १००% उघडेल
                 const reader = new FileReader();
                 reader.onload = function(evt) {
-                    const arrayBuffer = evt.target.result;
+                    const base64DataUrl = evt.target.result;
                     const newPdfObj = {
                         id: 'pdf_' + Date.now(),
                         title: title,
                         category: category,
-                        type: 'local',
-                        fileData: arrayBuffer,
+                        type: 'local_base64',
+                        owner: uploadRole,
+                        base64Data: base64DataUrl,
                         fileSize: sizeMB,
                         dateAdded: dateStr,
                         timestamp: Date.now()
                     };
 
-                    const tx = db.transaction(['pdfs'], 'readwrite');
-                    tx.objectStore('pdfs').put(newPdfObj);
-                    tx.oncomplete = function() {
-                        saveBtn.innerText = 'सेव्ह करा';
-                        saveBtn.disabled = false;
-                        closeUploadModal();
-                        loadAllPDFs();
-                    };
+                    savePdfRecord(newPdfObj, saveBtn);
                 };
-                reader.readAsArrayBuffer(file);
-
+                reader.readAsDataURL(file);
             } else {
                 const driveUrl = document.getElementById('pdfDriveUrl').value.trim();
                 if (!driveUrl) {
@@ -407,13 +420,27 @@
                     title: title,
                     category: category,
                     type: 'drive',
+                    owner: uploadRole,
                     driveUrl: driveUrl,
                     dateAdded: dateStr,
                     timestamp: Date.now()
                 };
+                savePdfRecord(newPdfObj, saveBtn);
+            }
+        }
 
-                const tx = db.transaction(['pdfs'], 'readwrite');
-                tx.objectStore('pdfs').put(newPdfObj);
+        function savePdfRecord(pdfObj, saveBtn) {
+            saveBtn.innerText = 'सेव्ह करा';
+            saveBtn.disabled = false;
+
+            if (uploadRole === 'teacher') {
+                teacherEmbeddedPDFs.unshift(pdfObj);
+                closeUploadModal();
+                loadAllPDFs();
+                alert('PDF शिक्षक यादीत जोडली गेली! आता सर्व विद्यार्थ्यांना दिसण्यासाठी वरच्या हिरव्या रंगाच्या "२. विद्यार्थ्यांसाठी ॲप डाउनलोड करा" बटनावर क्लिक करा.');
+            } else if (db) {
+                const tx = db.transaction(['student_pdfs'], 'readwrite');
+                tx.objectStore('student_pdfs').put(pdfObj);
                 tx.oncomplete = function() {
                     closeUploadModal();
                     loadAllPDFs();
@@ -421,18 +448,61 @@
             }
         }
 
-        // PDF डिलीट करणे
-        function deletePDF(id) {
-            if (!confirm('ही PDF यादीतून काढून टाकायची आहे का?')) return;
-            const tx = db.transaction(['pdfs'], 'readwrite');
-            tx.objectStore('pdfs').delete(id);
-            tx.oncomplete = function() {
+        function deletePDF(id, owner) {
+            if (!confirm('ही PDF काढून टाकायची आहे का?')) return;
+            if (owner === 'teacher') {
+                teacherEmbeddedPDFs = teacherEmbeddedPDFs.filter(p => p.id !== id);
                 loadAllPDFs();
-            };
+            } else if (db) {
+                const tx = db.transaction(['student_pdfs'], 'readwrite');
+                tx.objectStore('student_pdfs').delete(id);
+                tx.oncomplete = function() {
+                    loadAllPDFs();
+                };
+            }
         }
 
         // =========================================================================
-        // ५. GOOGLE DRIVE सारखा स्मूथ PDF व्ह्यूअर (PDF.js + Drive Preview)
+        // विद्यार्थ्यांसाठी सर्व PDF सह रेडीमेड ॲप फाईल तयार करणे (One-Click Export)
+        // =========================================================================
+        function exportStudentAppFile() {
+            if (teacherEmbeddedPDFs.length === 0) {
+                alert('तुम्ही अजून शिक्षक पॅनेलमध्ये एकही PDF जोडलेली नाही! आधी "१. + क्लासची PDF जोडा" वर क्लिक करून PDF जोडा.');
+                return;
+            }
+
+            // UI रिसेट करून स्वच्छ HTML तयार करणे
+            closeUploadModal();
+            closeViewer();
+            document.getElementById('teacherAdminBar').classList.add('hidden');
+            document.getElementById('teacherModeBtn').innerText = '👨‍🏫 शिक्षक पॅनेल';
+
+            let fullHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+            // पुन्हा शिक्षक पॅनेल दाखवणे
+            document.getElementById('teacherAdminBar').classList.remove('hidden');
+            document.getElementById('teacherModeBtn').innerText = '✖ शिक्षक पॅनेल बंद करा';
+
+            const startMarker = '/*' + '__EMBEDDED_DATA_START__' + '*/';
+            const endMarker = '/*' + '__EMBEDDED_DATA_END__' + '*/';
+
+            const startIdx = fullHtml.indexOf(startMarker);
+            const endIdx = fullHtml.indexOf(endMarker);
+
+            if (startIdx !== -1 && endIdx !== -1) {
+                const injectedCode = startMarker + "\n        let teacherEmbeddedPDFs = " + JSON.stringify(teacherEmbeddedPDFs) + ";\n        " + endMarker;
+                fullHtml = fullHtml.substring(0, startIdx) + injectedCode + fullHtml.substring(endIdx + endMarker.length);
+            }
+
+            const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Ajit_Sir_Spoken_English_Notes_App.html';
+            link.click();
+        }
+
+        // =========================================================================
+        // GOOGLE DRIVE सारखा स्मूथ PDF व्ह्यूअर
         // =========================================================================
         async function openPDFViewer(id) {
             const item = allPDFs.find(p => p.id === id);
@@ -448,49 +518,59 @@
             const zoomBar = document.getElementById('zoomControlsBar');
             const pageInd = document.getElementById('pageIndicator');
             const downloadBtn = document.getElementById('downloadCurrentBtn');
+            const extDriveBtn = document.getElementById('externalDriveBtn');
 
             if (item.type === 'drive') {
-                // Google Drive ची स्वतःची Preview विंडो उघडणे
                 localContainer.classList.add('hidden');
                 zoomBar.classList.add('hidden');
                 pageInd.classList.add('hidden');
                 downloadBtn.classList.add('hidden');
                 driveIframe.classList.remove('hidden');
+                extDriveBtn.classList.remove('hidden');
 
+                extDriveBtn.href = item.driveUrl;
                 driveIframe.src = convertToDrivePreviewUrl(item.driveUrl);
             } else {
-                // मोबाईलमध्ये सेव्ह केलेली PDF Google Drive सारख्या कॅनव्हासवर उघडणे
                 driveIframe.classList.add('hidden');
                 driveIframe.src = '';
+                extDriveBtn.classList.add('hidden');
                 localContainer.classList.remove('hidden');
                 zoomBar.classList.remove('hidden');
                 pageInd.classList.remove('hidden');
                 downloadBtn.classList.remove('hidden');
 
-                // स्क्रीनच्या रुंदीनुसार डिफॉल्ट झूम सेट करा
-                currentZoomScale = window.innerWidth < 640 ? 1.0 : 1.3;
+                currentZoomScale = 1.0;
                 updateZoomText();
-                await loadAndRenderLocalPDF(item.fileData);
+                await renderBase64PDF(item.base64Data);
             }
         }
 
-        async function loadAndRenderLocalPDF(arrayBuffer) {
+        // Base64 चे रूपांतर Uint8Array मध्ये करून PDF.js द्वारे उघडणे
+        function base64ToUint8Array(dataURI) {
+            const base64Index = dataURI.indexOf(';base64,') + ';base64,'.length;
+            const base64 = dataURI.substring(base64Index);
+            const raw = window.atob(base64);
+            const array = new Uint8Array(new ArrayBuffer(raw.length));
+            for (let i = 0; i < raw.length; i++) {
+                array[i] = raw.charCodeAt(i);
+            }
+            return array;
+        }
+
+        async function renderBase64PDF(base64Data) {
             const pagesWrapper = document.getElementById('pdfPagesWrapper');
             const spinner = document.getElementById('pdfLoadingSpinner');
             pagesWrapper.innerHTML = '';
             spinner.classList.remove('hidden');
 
             try {
-                // ArrayBuffer ची प्रत बनवून PDF.js ला देणे
-                const bufferCopy = arrayBuffer.slice(0);
-                currentPdfDoc = await pdfjsLib.getDocument({ data: bufferCopy }).promise;
-                
+                const pdfBytes = base64ToUint8Array(base64Data);
+                currentPdfDoc = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
                 spinner.classList.add('hidden');
                 document.getElementById('pageIndicator').innerText = `1 / ${currentPdfDoc.numPages}`;
-
                 await renderAllPages();
             } catch (err) {
-                spinner.innerHTML = `<p class="text-red-400">PDF उघडताना त्रुटी आली: ${err.message}</p>`;
+                spinner.innerHTML = `<p class="text-red-400 p-4">PDF उघडताना अडचण आली: ${err.message}</p>`;
             }
         }
 
@@ -499,13 +579,10 @@
             const pagesWrapper = document.getElementById('pdfPagesWrapper');
             pagesWrapper.innerHTML = '';
 
-            // मोबाईल स्क्रीनवर अक्षरे एकदम स्पष्ट (HD) दिसण्यासाठी DevicePixelRatio वापरणे
             const outputScale = window.devicePixelRatio || 1;
 
             for (let pageNum = 1; pageNum <= currentPdfDoc.numPages; pageNum++) {
                 const page = await currentPdfDoc.getPage(pageNum);
-                
-                // मोबाईल स्क्रीनच्या रुंदीनुसार बेस स्केल ठरवणे
                 const containerWidth = Math.min(window.innerWidth - 24, 850);
                 const unscaledViewport = page.getViewport({ scale: 1 });
                 const baseFitScale = containerWidth / unscaledViewport.width;
@@ -525,22 +602,19 @@
                 pagesWrapper.appendChild(canvas);
 
                 const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
-                const renderContext = {
+                await page.render({
                     canvasContext: canvas.getContext('2d'),
                     transform: transform,
                     viewport: viewport
-                };
-                await page.render(renderContext).promise;
+                }).promise;
             }
         }
 
-        // स्क्रोल करताना सध्याचा पेज नंबर वर दाखवणे
         document.getElementById('pdfViewerContainer').addEventListener('scroll', function() {
             if (!currentPdfDoc) return;
             const canvases = document.querySelectorAll('.pdf-page-canvas');
             let currentPage = 1;
             const containerTop = this.getBoundingClientRect().top;
-
             canvases.forEach(canvas => {
                 const rect = canvas.getBoundingClientRect();
                 if (rect.top - containerTop <= window.innerHeight / 2) {
@@ -550,7 +624,6 @@
             document.getElementById('pageIndicator').innerText = `${currentPage} / ${currentPdfDoc.numPages}`;
         });
 
-        // Zoom In / Zoom Out फंक्शन्स
         function changeZoom(delta) {
             const newScale = Math.min(Math.max(currentZoomScale + delta, 0.75), 3.0);
             if (newScale !== currentZoomScale) {
@@ -570,7 +643,6 @@
             document.getElementById('zoomLevelText').innerText = Math.round(currentZoomScale * 100) + '%';
         }
 
-        // Google Drive लिंकला Embed Preview लिंकमध्ये बदलणे
         function convertToDrivePreviewUrl(url) {
             const match = url.match(/[-\w]{25,}/);
             if (match && match[0]) {
@@ -579,12 +651,10 @@
             return url;
         }
 
-        // सध्याची PDF मोबाईलमध्ये डाउनलोड करणे
         function downloadCurrentPDF() {
-            if (!currentOpenPdfItem || currentOpenPdfItem.type !== 'local') return;
-            const blob = new Blob([currentOpenPdfItem.fileData], { type: 'application/pdf' });
+            if (!currentOpenPdfItem || !currentOpenPdfItem.base64Data) return;
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
+            link.href = currentOpenPdfItem.base64Data;
             link.download = currentOpenPdfItem.title + '.pdf';
             link.click();
         }
@@ -596,23 +666,32 @@
             currentPdfDoc = null;
         }
 
-        // =========================================================================
-        // ६. इतर मदतनीस फंक्शन्स (Modal आणि Category Filter)
-        // =========================================================================
         function setCategory(cat) {
             activeCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 if (btn.dataset.cat === cat) {
-                    btn.className = 'cat-btn bg-indigo-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap shadow-sm';
+                    btn.className = 'cat-btn bg-indigo-700 text-white px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap shadow-sm';
                 } else {
-                    btn.className = 'cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap';
+                    btn.className = 'cat-btn bg-white text-gray-700 border border-gray-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap';
                 }
             });
             renderPDFList();
         }
 
-        function openUploadModal() {
+        function openUploadModal(role) {
+            uploadRole = role || 'student';
             document.getElementById('addPdfForm').reset();
+            const badge = document.getElementById('modalRoleBadge');
+            const heading = document.getElementById('uploadModalHeading');
+            if (uploadRole === 'teacher') {
+                badge.innerText = 'TEACHER MODE (सर्व विद्यार्थ्यांसाठी)';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-amber-400 text-indigo-950';
+                heading.innerText = 'क्लासची अधिकृत PDF जोडा';
+            } else {
+                badge.innerText = 'STUDENT MODE';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800';
+                heading.innerText = 'माझ्या मोबाईलमध्ये PDF साठवा';
+            }
             document.getElementById('uploadModal').classList.remove('hidden');
         }
 
@@ -628,13 +707,13 @@
             const driveBox = document.getElementById('driveLinkInputBox');
 
             if (mode === 'local') {
-                tabLocal.className = 'py-2 text-sm font-bold rounded-lg bg-white text-indigo-700 shadow-sm';
-                tabDrive.className = 'py-2 text-sm font-bold rounded-lg text-gray-600';
+                tabLocal.className = 'py-2 text-xs font-bold rounded-lg bg-white text-indigo-700 shadow-sm';
+                tabDrive.className = 'py-2 text-xs font-bold rounded-lg text-gray-600';
                 localBox.classList.remove('hidden');
                 driveBox.classList.add('hidden');
             } else {
-                tabDrive.className = 'py-2 text-sm font-bold rounded-lg bg-white text-indigo-700 shadow-sm';
-                tabLocal.className = 'py-2 text-sm font-bold rounded-lg text-gray-600';
+                tabDrive.className = 'py-2 text-xs font-bold rounded-lg bg-white text-indigo-700 shadow-sm';
+                tabLocal.className = 'py-2 text-xs font-bold rounded-lg text-gray-600';
                 driveBox.classList.remove('hidden');
                 localBox.classList.add('hidden');
             }
