@@ -42,7 +42,7 @@
 
     <!-- Admin Active Strip -->
     <div id="admin-banner" class="hidden bg-emerald-600 text-white text-xs font-bold text-center py-1.5 px-4 shadow-inner">
-        🔓 'अजित सर टीचर मोड' चालू आहे! तुम्ही जोडलेले क्लासेस सर्व विद्यार्थ्यांच्या मोबाईलवर लाईव्ह दिसतील.
+        🔓 'अजित सर टीचर मोड' चालू आहे! तुम्ही आता नवीन लेक्चर्स जोडू शकता.
     </div>
 
     <!-- Main Container -->
@@ -52,7 +52,7 @@
         <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-6 text-white shadow-xl mb-6 relative overflow-hidden">
             <div class="relative z-10">
                 <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    🌟 फ्युचर स्टार डिजिटल ॲपमध्ये स्वागत आहे!
+                    🌟 स्वागत आहे!
                 </span>
                 <h2 class="text-2xl font-bold mt-3">प्रा. अजित सर यांचे क्लासेस</h2>
                 <p class="text-indigo-100 text-xs mt-1">तुमची बॅच निवडा आणि Zoom लाईव्ह क्लास किंवा रेकॉर्डेड व्हिडिओ पहा.</p>
@@ -66,7 +66,6 @@
         </h3>
 
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <!-- Folder 1 -->
             <div onclick="selectBatch('spoken_basic')" id="folder-spoken_basic" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-indigo-600 bg-indigo-50/40 flex flex-col justify-between">
                 <div class="flex justify-between items-start">
                     <div class="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center">
@@ -80,7 +79,6 @@
                 </div>
             </div>
 
-            <!-- Folder 2 -->
             <div onclick="selectBatch('spoken_adv')" id="folder-spoken_adv" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-transparent flex flex-col justify-between">
                 <div class="flex justify-between items-start">
                     <div class="bg-purple-100 text-purple-600 w-10 h-10 rounded-xl flex items-center justify-center">
@@ -94,7 +92,6 @@
                 </div>
             </div>
 
-            <!-- Folder 3 -->
             <div onclick="selectBatch('math_6_7')" id="folder-math_6_7" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-transparent flex flex-col justify-between">
                 <div class="flex justify-between items-start">
                     <div class="bg-emerald-100 text-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center">
@@ -108,7 +105,6 @@
                 </div>
             </div>
 
-            <!-- Folder 4 -->
             <div onclick="selectBatch('navodaya')" id="folder-navodaya" class="batch-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-transparent flex flex-col justify-between">
                 <div class="flex justify-between items-start">
                     <div class="bg-amber-100 text-amber-600 w-10 h-10 rounded-xl flex items-center justify-center">
@@ -152,7 +148,7 @@
                 <i class="fas fa-user-shield text-2xl"></i>
             </div>
             <h3 class="text-lg font-bold text-gray-800">अजित सर लॉगिन</h3>
-            <p class="text-xs text-gray-500 mt-1 mb-4">पासवर्ड टाका (डिफॉल्ट: 1234)</p>
+            <p class="text-xs text-gray-500 mt-1 mb-4">पासवर्ड टाका (1234)</p>
             <input type="password" id="pin-input" maxlength="6" placeholder="••••" class="w-full text-center text-2xl tracking-widest font-bold border-2 border-indigo-200 rounded-xl p-2.5 mb-3 focus:outline-none focus:border-indigo-600">
             <div class="flex space-x-2">
                 <button onclick="closePinModal()" class="flex-1 bg-gray-100 text-gray-600 py-2.5 rounded-xl font-bold text-xs">रद्द करा</button>
@@ -166,73 +162,70 @@
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800">सर्व विद्यार्थ्यांसाठी क्लास जोडा</h3>
-                    <p class="text-xs text-indigo-600 font-semibold">संचालक: प्रा. अजित सर</p>
+                    <h3 class="text-lg font-bold text-gray-800">क्लास जोडा</h3>
+                    <p class="text-xs text-indigo-600 font-semibold">प्रा. अजित सर</p>
                 </div>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 bg-gray-100 w-8 h-8 rounded-full">
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
             <div class="space-y-3.5 text-sm">
                 <div>
-                    <label class="block font-bold text-gray-700 mb-1">१. कोणती बॅच आहे? (Folder)</label>
+                    <label class="block font-bold text-gray-700 mb-1">१. बॅच निवडा</label>
                     <select id="form-batch" class="w-full border border-gray-300 rounded-xl p-2.5 bg-indigo-50 font-bold text-indigo-900">
                         <option value="spoken_basic">🗣️ स्पोकन इंग्लिश (Basic)</option>
                         <option value="spoken_adv">🚀 स्पोकन इंग्लिश (Advance)</option>
-                        <option value="math_6_7">📐 गणित (इयत्ता 6 वी व 7 वी)</option>
+                        <option value="math_6_7">📐 गणित (6 वी व 7 वी)</option>
                         <option value="navodaya">🏆 नवोदय विशेष बॅच</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="block font-bold text-gray-700 mb-1">२. काय टाकायचे आहे?</label>
+                    <label class="block font-bold text-gray-700 mb-1">२. प्रकार</label>
                     <select id="form-type" onchange="toggleTimeField()" class="w-full border border-gray-300 rounded-xl p-2.5 bg-gray-50 font-semibold">
-                        <option value="live">🔵 Zoom लाईव्ह क्लास लिंक</option>
+                        <option value="live">🔵 Zoom लाईव्ह क्लास</option>
                         <option value="recorded">🔴 रेकॉर्डेड व्हिडिओ (YouTube)</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block font-medium text-gray-700 mb-1">३. टॉपिकचे नाव *</label>
-                    <input type="text" id="form-title" placeholder="उदा. Daily Use Sentences" class="w-full border border-gray-300 rounded-xl p-2.5">
+                    <input type="text" id="form-title" placeholder="उदा. English Grammar" class="w-full border border-gray-300 rounded-xl p-2.5">
                 </div>
 
                 <div id="time-box">
-                    <label class="block font-medium text-gray-700 mb-1">४. क्लासची वेळ *</label>
-                    <input type="text" id="form-time" placeholder="उदा. सायंकाळी ७:०० वाजता" class="w-full border border-gray-300 rounded-xl p-2.5">
+                    <label class="block font-medium text-gray-700 mb-1">४. वेळ *</label>
+                    <input type="text" id="form-time" placeholder="उदा. सायंकाळी ६:०० वाजता" class="w-full border border-gray-300 rounded-xl p-2.5">
                 </div>
 
                 <div>
-                    <label id="link-label" class="block font-medium text-gray-700 mb-1">५. Zoom मीटिंग लिंक *</label>
+                    <label id="link-label" class="block font-medium text-gray-700 mb-1">५. लिंक टाка *</label>
                     <input type="url" id="form-link" placeholder="https://..." class="w-full border border-gray-300 rounded-xl p-2.5">
                 </div>
 
                 <button onclick="saveClassData()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold shadow-lg transition mt-2">
-                    <i class="fas fa-cloud-upload-alt mr-1"></i> सर्व विद्यार्थ्यांच्या ॲपवर पाठवा
+                    <i class="fas fa-check-circle mr-1"></i> क्लास सेव्ह करा
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK Scripts -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        // Free Firebase Configuration for Future Star Classes
-        const firebaseConfig = {
-            databaseURL: "https://future-star-classes-default-rtdb.firebaseio.com/"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        const TEACHER_PIN = "1234"; 
+    <script>
+        const TEACHER_PIN = "1234";
         let isTeacherMode = false;
         let currentBatch = 'spoken_basic';
         let currentTab = 'live';
-        let globalData = { spoken_basic: { live: {}, recorded: {} }, spoken_adv: { live: {}, recorded: {} }, math_6_7: { live: {}, recorded: {} }, navodaya: { live: {}, recorded: {} } };
+
+        let appData = JSON.parse(localStorage.getItem('futureStarData')) || {
+            spoken_basic: {
+                live: [{ title: 'इंग्रजी बोलण्याची सुरुवात - Day 1', time: 'सायंकाळी ६:०० ते ७:००', link: 'https://zoom.us' }],
+                recorded: []
+            },
+            spoken_adv: { live: [], recorded: [] },
+            math_6_7: { live: [], recorded: [] },
+            navodaya: { live: [], recorded: [] }
+        };
 
         const batchNames = {
             spoken_basic: '🗣️ स्पोकन इंग्लिश (Basic)',
@@ -241,17 +234,7 @@
             navodaya: '🏆 नवोदय विशेष बॅच'
         };
 
-        // Real-time listener from Firebase (Automatic Sync across all student phones)
-        const dbRef = ref(db, 'classes');
-        onValue(dbRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                globalData = data;
-            }
-            renderContent();
-        });
-
-        window.handleTeacherAuth = function() {
+        function handleTeacherAuth() {
             if (isTeacherMode) {
                 isTeacherMode = false;
                 updateTeacherUI();
@@ -262,16 +245,17 @@
             }
         }
 
-        window.closePinModal = function() {
+        function closePinModal() {
             document.getElementById('pin-modal').classList.add('hidden');
         }
 
-        window.verifyPin = function() {
+        function verifyPin() {
             const pin = document.getElementById('pin-input').value.trim();
             if (pin === TEACHER_PIN) {
                 isTeacherMode = true;
                 closePinModal();
                 updateTeacherUI();
+                alert('अजित सर लॉगिन यशस्वी!');
             } else {
                 alert('चुकीचा पासवर्ड!');
             }
@@ -286,17 +270,17 @@
                 addBtn.classList.remove('hidden');
                 banner.classList.remove('hidden');
                 lockBtn.innerHTML = '<i class="fas fa-lock-open mr-1"></i> लॉक करा';
-                lockBtn.className = 'bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center';
+                lockBtn.className = 'bg-red-500 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center';
             } else {
                 addBtn.classList.add('hidden');
                 banner.classList.add('hidden');
                 lockBtn.innerHTML = '<i class="fas fa-lock mr-1.5"></i> अजित सर लॉगिन';
-                lockBtn.className = 'bg-amber-400 hover:bg-amber-500 text-indigo-950 px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center';
+                lockBtn.className = 'bg-amber-400 text-indigo-950 px-3 py-2 rounded-xl text-xs font-bold shadow-md transition flex items-center';
             }
             renderContent();
         }
 
-        window.selectBatch = function(batchKey) {
+        function selectBatch(batchKey) {
             currentBatch = batchKey;
             document.getElementById('current-batch-title').innerText = batchNames[batchKey];
             ['spoken_basic', 'spoken_adv', 'math_6_7', 'navodaya'].forEach(key => {
@@ -312,14 +296,14 @@
             renderContent();
         }
 
-        window.switchTab = function(tab) {
+        function switchTab(tab) {
             currentTab = tab;
             document.getElementById('tab-live').className = tab === 'live' ? 'px-3 py-2 rounded-lg active-tab transition' : 'px-3 py-2 rounded-lg text-gray-600 transition';
             document.getElementById('tab-recorded').className = tab === 'recorded' ? 'px-3 py-2 rounded-lg active-tab transition' : 'px-3 py-2 rounded-lg text-gray-600 transition';
             renderContent();
         }
 
-        window.openModal = function() {
+        function openModal() {
             if (!isTeacherMode) return;
             document.getElementById('form-batch').value = currentBatch;
             document.getElementById('form-type').value = currentTab;
@@ -327,11 +311,11 @@
             document.getElementById('admin-modal').classList.remove('hidden');
         }
 
-        window.closeModal = function() {
+        function closeModal() {
             document.getElementById('admin-modal').classList.add('hidden');
         }
 
-        window.toggleTimeField = function() {
+        function toggleTimeField() {
             const type = document.getElementById('form-type').value;
             const timeBox = document.getElementById('time-box');
             const linkLabel = document.getElementById('link-label');
@@ -352,8 +336,7 @@
             return id ? `https://www.youtube.com/embed/${id}` : null;
         }
 
-        window.saveClassData = function() {
-            if (!isTeacherMode) return;
+        function saveClassData() {
             const batch = document.getElementById('form-batch').value;
             const type = document.getElementById('form-type').value;
             const title = document.getElementById('form-title').value.trim();
@@ -361,63 +344,59 @@
             const link = document.getElementById('form-link').value.trim();
 
             if (!title || !link) {
-                alert('कृपया टॉपिकचे नाव आणि लिंक नक्की टाका!');
+                alert('कृपया टॉपिकचे नाव आणि लिंक नक्की भरा!');
                 return;
             }
 
-            const newItemRef = push(ref(db, `classes/${batch}/${type}`));
-            set(newItemRef, {
+            appData[batch][type].push({
                 title: title,
-                time: time || 'वेळ दिली नाही',
+                time: time || 'वेळ दिलेली नाही',
                 link: link
-            }).then(() => {
-                document.getElementById('form-title').value = '';
-                document.getElementById('form-time').value = '';
-                document.getElementById('form-link').value = '';
-                closeModal();
-                alert('यशस्वी! सर्व विद्यार्थ्यांच्या मोबाईलवर क्लास लाईव्ह झाला आहे.');
-            }).catch((error) => {
-                alert('एरर आला: ' + error.message);
             });
+
+            localStorage.setItem('futureStarData', JSON.stringify(appData));
+
+            document.getElementById('form-title').value = '';
+            document.getElementById('form-time').value = '';
+            document.getElementById('form-link').value = '';
+            closeModal();
+            renderContent();
+            alert('यशस्वी! क्लास सेव्ह झाला आहे.');
         }
 
-        window.deleteEntry = function(itemId) {
+        function deleteEntry(index) {
             if (!isTeacherMode) return;
-            if (confirm('अजित सर, हा क्लास सर्व विद्यार्थ्यांच्या ॲपमधून डिलीट करायचा आहे का?')) {
-                remove(ref(db, `classes/${currentBatch}/${currentTab}/${itemId}`)).then(() => {
-                    alert('डिलीट झाले!');
-                });
+            if (confirm('हा क्लास डिलीट करायचा का?')) {
+                appData[currentBatch][currentTab].splice(index, 1);
+                localStorage.setItem('futureStarData', JSON.stringify(appData));
+                renderContent();
             }
         }
 
         function renderContent() {
             const container = document.getElementById('content-area');
-            const batchObj = globalData[currentBatch] || {};
-            const typeObj = batchObj[currentTab] || {};
-            const itemIds = Object.keys(typeObj);
+            const items = appData[currentBatch][currentTab];
 
-            if (itemIds.length === 0) {
+            if (items.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-gray-300 text-gray-500">
                         <i class="fas fa-folder-open text-3xl mb-2 text-indigo-300"></i>
                         <p class="font-semibold text-sm">सध्या या फोल्डरमध्ये कोणतीही माहिती नाही.</p>
-                        <p class="text-xs mt-1">${isTeacherMode ? "वरच्या <b>'+ क्लास जोडा'</b> बटनातून नवीन माहिती टाका." : "प्रा. अजित सर लवकरच नवीन लेक्चर्स अपडेट करतील."}</p>
+                        <p class="text-xs mt-1">${isTeacherMode ? "वरच्या <b>'+ क्लास जोडा'</b> बटनातून नवीन माहिती टाका." : "लवकरच नवीन लेक्चर्स अपडेट केले जातील."}</p>
                     </div>`;
                 return;
             }
 
             if (currentTab === 'live') {
-                container.innerHTML = itemIds.map(id => {
-                    const item = typeObj[id];
-                    return `
+                container.innerHTML = items.map((item, idx) => `
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-2xl border border-indigo-100 flex flex-col justify-between relative shadow-sm">
                         ${isTeacherMode ? `
-                        <button onclick="deleteEntry('${id}')" class="absolute top-3 right-3 bg-red-100 text-red-600 hover:bg-red-200 w-8 h-8 rounded-full flex items-center justify-center shadow-sm" title="डिलीट करा">
+                        <button onclick="deleteEntry(${idx})" class="absolute top-3 right-3 bg-red-100 text-red-600 hover:bg-red-200 w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
                             <i class="fas fa-trash-alt text-xs"></i>
                         </button>` : ''}
                         <div>
                             <span class="bg-blue-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full inline-flex items-center">
-                                <i class="fas fa-video mr-1 animate-pulse"></i> ZOOM LIVE CLASS
+                                <i class="fas fa-video mr-1"></i> ZOOM LIVE CLASS
                             </span>
                             <h4 class="font-bold text-gray-800 text-base mt-2.5 pr-8">${item.title}</h4>
                             <p class="text-xs text-gray-600 mt-1"><i class="fas fa-chalkboard-teacher mr-1 text-indigo-600"></i> मार्गदर्शक: <b>प्रा. अजित सर</b></p>
@@ -426,11 +405,9 @@
                         <a href="${item.link}" target="_blank" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-center py-2.5 rounded-xl font-bold text-sm shadow transition flex items-center justify-center">
                             <i class="fas fa-external-link-alt mr-2"></i> Zoom क्लास जॉईन करा
                         </a>
-                    </div>`;
-                }).join('');
+                    </div>`).join('');
             } else {
-                container.innerHTML = itemIds.map(id => {
-                    const item = typeObj[id];
+                container.innerHTML = items.map((item, idx) => {
                     const embed = getYouTubeEmbed(item.link);
                     return `
                     <div class="bg-slate-50 rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
@@ -446,7 +423,7 @@
                                 <p class="text-xs text-gray-500">प्रा. अजित सर • Future Star Classes</p>
                             </div>
                             ${isTeacherMode ? `
-                            <button onclick="deleteEntry('${id}')" class="bg-red-100 text-red-600 hover:bg-red-200 w-8 h-8 rounded-full flex items-center justify-center">
+                            <button onclick="deleteEntry(${idx})" class="bg-red-100 text-red-600 hover:bg-red-200 w-8 h-8 rounded-full flex items-center justify-center">
                                 <i class="fas fa-trash-alt text-xs"></i>
                             </button>` : ''}
                         </div>
@@ -454,6 +431,8 @@
                 }).join('');
             }
         }
+
+        renderContent();
     </script>
 </body>
 </html>
